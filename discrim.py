@@ -1,4 +1,5 @@
 import requests
+import json
 import colorama
 from colorama import Fore,init
 init()
@@ -12,17 +13,26 @@ def load_token():
 
 def checker():
     for x in tokens:
-        api = 'https://discordapp.com/api/users/@me'
-        headers = {
-            "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36",
-            "Authorization":x,
-            "Content-Type":"application/json"
-        }
-        r = requests.get(api,headers=headers)
-        discrim = r.json()['discriminator']
-        print(Fore.YELLOW+x+"|#"+discrim)
-        with open("discrims.txt", "a") as save:
-            save.write(x+"|#"+discrim+"\n")
+        try:
+            api = 'https://discordapp.com/api/users/@me'
+            headers = {
+                "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36",
+                "Authorization":x,
+                "Content-Type":"application/json"
+            }
+            r = requests.get(api,headers=headers)
+            if "discriminator" in r.json():
+                discrim = r.json()['discriminator']
+                print(Fore.YELLOW+x+"|#"+discrim)
+                with open("discrims.txt", "a") as save:
+                    save.write(x+"|#"+discrim+"\n")
+            else:
+                print(Fore.RED+x+"|Invalid")
+        except:
+            print('rate limited')
+            
+  
+
 
 load_token()
 checker()
